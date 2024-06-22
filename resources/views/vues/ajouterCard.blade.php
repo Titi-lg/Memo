@@ -46,9 +46,7 @@
                                 <span class="glyphicon glyphicon-ok"></span>Valider
                             </button>
                             &nbsp;
-                            <button type="button" class="btn btn-default btn-primary"
-                                    onclick="javascript:if(confirm('vous êtes sûr ?'))
-                                        window.location='{{url('/')}}';">
+                            <button type="button" class="btn btn-default btn-primary">
                                 <span class="glyphicon glyphicon-remove"></span>Annuler</button>
                         </div>
                     </div>
@@ -56,3 +54,5 @@
             </div>
         </div>
     </div>
+    {!! Form::close() !!}
+@stop

@@ -9,6 +9,50 @@
     <!-- Fonts -->
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet'
           type='text/css'>
+    <style>
+        .btn-url{
+            margin-top: 2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+        .btn-url a{
+            text-decoration: none;
+            color: #2b669a;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .btn-url a:hover{
+            color: #2b669a;
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .btn-finish{
+            margin-top: 2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+        .btn-finish a{
+            text-decoration: none;
+            color: #2b669a;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .btn-finish a:hover{
+            color: #2b669a;
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .card-list{
+        display: flex;
+            flex-direction: column;
+            padding: 0
+        }
+
+    </style>
 </head>
 <body class="body">
 <div class="container">
@@ -28,6 +72,7 @@
                     <li><a href="{{ url('/CardSentenceToday') }}" data-toggle="collapse" datatarget=".navbar-collapse.in">Work Sentence</a></li>
                     <li><a href="{{ url('/CardLessonToday') }}" data-toggle="collapse" datatarget=".navbar-collapse.in">Work Lesson</a></li>
                     <li><a href="{{ url('/ajouterCard') }}" data-toggle="collapse" datatarget=".navbar-collapse.in">Ajouter </a></li>
+                    <li><a href="{{url('/RechercheCard')}}" data-toggle="collapse" datatarget=".navbar-collapse.in">Recheche Card</a></li>
                 </ul>
             </div>
         </div><!--/.container-fluid -->

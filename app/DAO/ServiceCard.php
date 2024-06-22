@@ -6,6 +6,29 @@ use Illuminate\Support\Facades\DB;
 use App\Exceptions\MonException;
 class ServiceCard
 {
+    public function incrementCounter()
+    {
+        try {
+            $counter = DB::table('counters')
+                ->first();
+            $newCounter = $counter->value + 1;
+            DB::table('counters')
+                ->where('id', $counter->id)
+                ->update(['value' => $newCounter]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            throw new MonException($e->getMessage(), 5);
+        }
+    }
+    public function getCounter()
+    {
+        try {
+            $counter = DB::table('counters')
+                ->first();
+            return $counter;
+        } catch (\Illuminate\Database\QueryException $e) {
+            throw new MonException($e->getMessage(), 5);
+        }
+    }
     public function ajoutCard($name, $theme, $type, $url, $date, $iteration)
     {
         try {
@@ -90,13 +113,13 @@ class ServiceCard
             throw new MonException($e->getMessage(),5);
         }
     }
-
-    public function getCardByDate($date)
+    public function getCardByDateAndType($date, $type)
     {
         try {
             $mesCards = DB::table('card')
                 ->select()
                 ->where('date', '<=', $date)
+                ->where('type', '=', $type)
                 ->get();
             return $mesCards;
         } catch (\Illmuninate\Database\QueryException $e) {
@@ -104,13 +127,12 @@ class ServiceCard
         }
     }
 
-    public function getCardByDateAndType($date,$type)
+    public function getCardByDate($date)
     {
         try {
             $mesCards = DB::table('card')
                 ->select()
                 ->where('date', '<=', $date)
-                ->where('type', '=', $type)
                 ->get();
             return $mesCards;
         } catch (\Illmuninate\Database\QueryException $e) {
@@ -138,6 +160,57 @@ public function NextCard($id, $date)
     } catch (\Illuminate\Database\QueryException $e) {
         throw new MonException($e->getMessage(), 5);
     }
+}
+
+public function getIteration($id)
+{
+    try {
+        $iteration = DB::table('card')
+            ->where('id', $id)
+            ->value('iteration');
+        return $iteration;
+    } catch (\Illuminate\Database\QueryException $e) {
+        throw new MonException($e->getMessage(), 5);
+    }
+}
+
+public function oldDate($id)
+{
+    try {
+        $date = DB::table('card')
+            ->where('id','=', $id)
+            ->value('date');
+        $iteration = DB::table('card')
+            ->where('id','=', $id)
+            ->value('iteration');
+    } catch (\Illuminate\Database\QueryException $e) {
+        throw new MonException($e->getMessage(), 5);
+    }
+    if ($iteration) {
+        if ($iteration == 0) {
+            $date = Carbon::parse($date)->subDay(1);
+        } elseif ($iteration == 1) {
+            $date = Carbon::parse($date)->subDay(2);
+        } elseif ($iteration == 2) {
+            $date = Carbon::parse($date)->subDay(4);
+        } elseif ($iteration == 3) {
+            $date = Carbon::parse($date)->subDay(7);
+        } elseif ($iteration == 4) {
+            $date = Carbon::parse($date)->subDay(14);
+        } elseif ($iteration == 5) {
+            $date = Carbon::parse($date)->subDay(30);
+        } elseif ($iteration == 6) {
+            $date = Carbon::parse($date)->subDay(60);
+        } elseif ($iteration == 7) {
+            $date = Carbon::parse($date)->subDay(90);
+        } elseif ($iteration == 8) {
+            $date = Carbon::parse($date)->subDay(180);
+        } else {
+            $date = Carbon::parse($date)->subDay(365);
+        }
+        return $date;
+    }
+    return $date;
 }
 
 public function getType($id)
@@ -195,4 +268,53 @@ public function NewDate($currentIteration)
     }
     return $date;
 }
+    public function rechercheCard($recherche)
+    {
+        try {
+            $mesCards = DB::table('card')
+                ->select()->where('name', 'like', "%{$recherche}%")
+                ->orWhere('theme', 'like', "%{$recherche}%")
+                ->orWhere('type', 'like', "%{$recherche}%")
+                ->orderBy('date', 'desc')
+                ->get();
+        } catch (\Illuminate\Database\QueryException $e) {
+            throw new MonException($e->getMessage(), 5);
+        }
+        return $mesCards;
+    }
+    public function getTypeCard($id): string
+{
+    try {
+        $type = DB::table('card')
+            ->where('id','=', $id)
+            ->value('type');
+        return $type;
+    } catch (\Illuminate\Database\QueryException $e) {
+        throw new MonException($e->getMessage(), 5);
+    }
+}
+
+    public function getNotice($type1, $type2, $type3)
+    {
+        try {
+            $count1 = DB::table('card')
+                ->where('type', '=', $type1)
+                ->where('date', '<', Carbon::now())
+                ->count();
+
+            $count2 = DB::table('card')
+                ->where('type', '=', $type2)
+                ->where('date', '<', Carbon::now())
+                ->count();
+
+            $count3 = DB::table('card')
+                ->where('type', '=', $type3)
+                ->where('date', '<', Carbon::now())
+                ->count();
+
+            return [$type1 => $count1, $type2 => $count2, $type3 => $count3];
+        } catch (\Illuminate\Database\QueryException $e) {
+            throw new MonException($e->getMessage(),5);
+        }
+    }
 }
